@@ -1,4 +1,4 @@
-use std::io;
+use std::{collections::HashMap, io};
 fn main() {
     // Given a set of integers, Return the measure of central tendency: Mean, Median, Mode
     let mut input_values = Vec::new();
@@ -47,11 +47,11 @@ fn main() {
 
     let mean = match find_mean(&mut input_values) {
         Some(mean) => mean,
-         _ => 0.0
+        _ => 0.0,
     };
     println!("Mean: {:.3}", mean);
     // Find the median value of the input_values vector
-    fn find_median(mut values: Vec<i32>) -> Option<i32> {
+    fn find_median(values: &mut Vec<i32>) -> Option<i32> {
         if values.is_empty() {
             println!("Enter values for the data set");
             None
@@ -60,9 +60,47 @@ fn main() {
             Some(values[values.len() / 2])
         }
     }
-    let median = match find_median(input_values) {
+    let median = match find_median(&mut input_values) {
         Some(median) => median,
-        _ => 0
+        _ => 0,
     };
     println!("Median: {}", median);
+    fn find_mode(values: &mut Vec<i32>) -> Vec<i32> {
+        if values.is_empty() {
+            println!("Enter values for the data set");
+            return vec![];
+        }
+    
+        values.sort();
+        let mut map = HashMap::new();
+        let mut max_count = 0;
+    
+        for value in values {
+            let count = map.entry(value).or_insert(0);
+            *count += 1;
+    
+            if *count > max_count {
+                max_count = *count;
+            }
+        }
+    
+        let mut modes = vec![];
+    
+        for (key, value) in &map {
+            if value == &max_count {
+                modes.push(**key);
+            }
+        }
+    
+        modes
+    }
+    
+    let modes = find_mode(&mut input_values);
+    
+    if modes.is_empty() {
+        println!("No mode found");
+    } else {
+        println!("Modes: {:?}", modes);
+    }
+    
 }
